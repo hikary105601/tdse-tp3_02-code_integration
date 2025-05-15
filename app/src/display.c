@@ -4,6 +4,7 @@
 
 #include "display.h"
 #include "main.h"
+#include "dwt.h"
 #include <stdbool.h>
 
 /********************** arm_book Defines *******************************/
@@ -103,6 +104,7 @@ static bool initial8BitCommunicationIsCompleted;
 static void displayPinWrite( uint8_t pinName, int value );
 static void displayDataBusWrite( uint8_t dataByte );
 static void displayCodeWrite( bool type, uint8_t dataBus );
+void Delay_us(uint32_t delay);
 
 //=====[Implementations of public functions]===================================
 void displayInit( displayConnection_t connection )
@@ -188,7 +190,7 @@ void displayCharPositionWrite( uint8_t charPositionX, uint8_t charPositionY )
                               DISPLAY_IR_SET_DDRAM_ADDR |
                               ( DISPLAY_20x4_LINE1_FIRST_CHARACTER_ADDRESS +
                                 charPositionX ) );
-            HAL_Delay( 1 );
+            Delay_us( 37 );
         break;
 
         case 1:
@@ -196,7 +198,7 @@ void displayCharPositionWrite( uint8_t charPositionX, uint8_t charPositionY )
                               DISPLAY_IR_SET_DDRAM_ADDR |
                               ( DISPLAY_20x4_LINE2_FIRST_CHARACTER_ADDRESS +
                                 charPositionX ) );
-            HAL_Delay( 1 );
+            Delay_us( 37 );
         break;
 
         case 2:
@@ -204,7 +206,7 @@ void displayCharPositionWrite( uint8_t charPositionX, uint8_t charPositionY )
                               DISPLAY_IR_SET_DDRAM_ADDR |
                               ( DISPLAY_20x4_LINE3_FIRST_CHARACTER_ADDRESS +
                                 charPositionX ) );
-            HAL_Delay( 1 );
+            Delay_us( 37 );
         break;
 
         case 3:
@@ -212,7 +214,7 @@ void displayCharPositionWrite( uint8_t charPositionX, uint8_t charPositionY )
                               DISPLAY_IR_SET_DDRAM_ADDR |
                               ( DISPLAY_20x4_LINE4_FIRST_CHARACTER_ADDRESS +
                                 charPositionX ) );
-            HAL_Delay( 1 );
+            Delay_us( 37 );
         break;
     }
 }
@@ -328,7 +330,18 @@ static void displayDataBusWrite( uint8_t dataBus )
 
     }
     displayPinWrite( DISPLAY_PIN_EN, ON );
-    HAL_Delay( 1 );
+    Delay_us( 37 );
     displayPinWrite( DISPLAY_PIN_EN, OFF );
-    HAL_Delay( 1 );
+    Delay_us( 37 );
 }
+
+void Delay_us(uint32_t delay) {
+	uint32_t now, then;
+
+	now = cycle_counter_time_us();
+	then = now + delay;
+
+	while(now >= then)
+		now = cycle_counter_time_us();
+}
+
